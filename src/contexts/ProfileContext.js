@@ -4,7 +4,7 @@ import { useState, createContext } from "react";
 // createContext の引数には global state の初期値を指定してあげるイメージ?
 export const ProfileContext = createContext();
 
-export const ProfileContextProvider = (props) => {
+export const ProfileContextProvider = ({children}) => {
   const [user, setUser] = useState({
     avatar_url: "https://avatars.githubusercontent.com/u/35441214?v=4",
     name: "Yuki Shibata",
@@ -16,7 +16,7 @@ export const ProfileContextProvider = (props) => {
   });
   return (
     <ProfileContext.Provider value={{user, setUser}}>
-      {props.children}
+      {children}
     </ProfileContext.Provider>
   );
 };
