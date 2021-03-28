@@ -1,7 +1,11 @@
-import React, { useEffect } from "react";
+import React, { useContext } from "react";
 import styled from "styled-components";
 import { colors } from "../variables";
 import PropTypes from "prop-types";
+import {
+  ProfileContext,
+} from "../contexts/ProfileContext";
+// import { fetchUser } from "../service/apiRequest";
 
 const ProfileContainer = styled.div`
   display: flex;
@@ -37,16 +41,13 @@ const ProfileWrapper = styled.div`
   padding: 1rem;
 `;
 
-const Profile = ({ user, requestUser }) => {
-  useEffect(() => {
-    requestUser();
-  }, [requestUser]);
+const Profile = () => {
 
-  const userData = user.data;
+  const { user } = useContext(ProfileContext);
 
   // Profileページでリロードされるとpromiseから返ってくるのを待たずにundifinedから値を参照しようとしてundifined→エラーになる
   // そのため存在チェックを先に行っておく
-  if (!userData) {
+  if (!user) {
     // 実務ではこのフラグメントの部分にローダーやプレースホルダーを入れたりする
     return <></>;
   }
@@ -58,37 +59,37 @@ const Profile = ({ user, requestUser }) => {
         <ProfilePicture>
           <Label>プロフィール</Label>
           <ProfileItem>
-            <img src={userData.avatar_url} alt="profile" />
+            <img src={user.avatar_url} alt="profile" />
           </ProfileItem>
         </ProfilePicture>
         <ProfileInformation>
           <div>
             <Label>ユーザー名</Label>
-            <ProfileItem>{userData.name}</ProfileItem>
+            <ProfileItem>{user.name}</ProfileItem>
           </div>
           <div>
             <Label>アカウントURL</Label>
             <ProfileItem>
-              <a target="_blank" rel="noreferrer" href={userData.html_url}>
-                {userData.html_url}
+              <a target="_blank" rel="noreferrer" href={user.html_url}>
+                {user.html_url}
               </a>
             </ProfileItem>
           </div>
           <div>
             <Label>フォロー数</Label>
-            <ProfileItem>{userData.following}</ProfileItem>
+            <ProfileItem>{user.following}</ProfileItem>
           </div>
           <div>
             <Label>フォロワー数</Label>
-            <ProfileItem>{userData.followers}</ProfileItem>
+            <ProfileItem>{user.followers}</ProfileItem>
           </div>
           <div>
             <Label>パブリックレポジトリ数</Label>
-            <ProfileItem>{userData.public_repos}</ProfileItem>
+            <ProfileItem>{user.public_repos}</ProfileItem>
           </div>
           <div>
             <Label>プライベートリポジトリ数</Label>
-            <ProfileItem>{userData.owned_private_repos}</ProfileItem>
+            <ProfileItem>{user.owned_private_repos}</ProfileItem>
           </div>
         </ProfileInformation>
       </ProfileContainer>
