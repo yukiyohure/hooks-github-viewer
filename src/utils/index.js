@@ -1,4 +1,23 @@
 import { parse, format } from "date-fns";
+import { toast } from "react-toastify";
+
+export const fullfilled = (message) => {
+  toast.success(message, {
+    className: "toast-success",
+    hideProgressBar: true,
+    autoClose: false,
+    position: "top-center",
+  });
+};
+
+export const failed = (message) => {
+  toast.error(message, {
+    className: "toast-error",
+    hideProgressBar: true,
+    autoClose: false,
+    position: "top-center",
+  });
+};
 
 export const getFormatedDate = (dateString) => {
   // dateString: 2021-03-12T14:40:54Z
@@ -11,3 +30,4 @@ export const getFormatedDate = (dateString) => {
 export const validateRequired = (value, errorMessage) => {
   return value === "" ? errorMessage : "";
 };
+

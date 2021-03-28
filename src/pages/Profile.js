@@ -1,11 +1,10 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import styled from "styled-components";
 import { colors } from "../variables";
 import PropTypes from "prop-types";
-import {
-  ProfileContext,
-} from "../contexts/ProfileContext";
-// import { fetchUser } from "../service/apiRequest";
+import { ProfileContext } from "../contexts/ProfileContext";
+import { fetchUser } from "../service/apiRequest";
+import { failed } from "../utils";
 
 const ProfileContainer = styled.div`
   display: flex;
@@ -42,8 +41,17 @@ const ProfileWrapper = styled.div`
 `;
 
 const Profile = () => {
+  const { user, setUser } = useContext(ProfileContext);
 
-  const { user } = useContext(ProfileContext);
+  useEffect(() => {
+    fetchUser()
+      .then((res) => {
+        setUser(res);
+      })
+      .catch((e) => {
+        failed(e.message);
+      });
+  }, [setUser]);
 
   // Profileページでリロードされるとpromiseから返ってくるのを待たずにundifinedから値を参照しようとしてundifined→エラーになる
   // そのため存在チェックを先に行っておく
