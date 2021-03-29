@@ -6,10 +6,11 @@ import IssuePage from "./pages/Issue";
 import PullRequest from "./pages/PullRequest";
 import Index from "./pages/Index.js";
 import styled from "styled-components";
-import Profile from "./containers/Profile";
+import Profile from "./pages/Profile";
 import ModalWrapper from "./containers/Modal";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { ProfileContextProvider } from "./contexts/ProfileContext";
 
 const ContentWrapper = styled.div`
   padding: 2rem 1rem;
@@ -19,19 +20,21 @@ const ContentWrapper = styled.div`
 
 function App() {
   return (
-    <Router basename="/redux-saga-github-viewer">
+    <Router basename="/hooks-github-viewer">
       <div>
         <ModalWrapper />
         <GlobalStyle />
         <Header />
         <ContentWrapper>
-          <Switch>
-            <Route path="/issue" component={IssuePage} />
-            <Route path="/pull-request" component={PullRequest} />
-            <Route path="/profile" component={Profile} />
-            <Route exact path="/" component={Index} />
-            {/* pathの検索方法が前方置換なのでexactを宣言して完全一致にしてあげる */}
-          </Switch>
+          <ProfileContextProvider>
+            <Switch>
+              <Route path="/issue" component={IssuePage} />
+              <Route path="/pull-request" component={PullRequest} />
+              <Route path="/profile" component={Profile} />
+              <Route exact path="/" component={Index} />
+              {/* pathの検索方法が前方置換なのでexactを宣言して完全一致にしてあげる */}
+            </Switch>
+          </ProfileContextProvider>
         </ContentWrapper>
         <ToastContainer limit={3} />
       </div>
