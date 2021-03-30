@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState, useContext } from "react";
 import styled from "styled-components";
 import TextInput from "../atoms/TextInput";
 import TextArea from "../atoms/TextArea";
@@ -6,6 +6,8 @@ import Button from "../atoms/Button";
 import PropTypes from "prop-types";
 import ErrorMessage from "../atoms/ErrorMessage";
 import { validateRequired } from "../../utils";
+import { IssueContext } from "../../contexts/IssueContext";
+import { createIssue, fetchIssueData } from "../../service/apiRequest";
 
 const Wrapper = styled.div`
   max-width: 598px;
@@ -49,22 +51,20 @@ const Footer = styled.div`
   }
 `;
 
-const NewIssue = ({ hideModal, createIssue }) => {
+const NewIssue = ({ hideModal }) => {
   const [issueTitle, setIssueTitle] = useState("");
   const [issuebody, setIssuebody] = useState("");
   // 表示するためのエラーメッセージオブジェクト。keyにあるだけの文が潜在的なエラー分の全て。
   const [errors, setErrors] = useState({ title: "", body: "" });
+  const {setIssueData} = useContext(IssueContext);
 
-  const onSubmit = () => {
+  const onSubmit = async () => {
     // バリデーションは種類ごとに関数で切り分けて、拡張性を重視してみる(1種類しかないけど)
     const titleError = validateRequired(
       issueTitle,
       "タイトルを入力してください"
     );
-    const bodyError = validateRequired(
-      issuebody,
-      "説明を入力してください"
-    );
+    const bodyError = validateRequired(issuebody, "説明を入力してください");
 
     // エラーがあった場合は早期リターンでdispatchさせない
     if (titleError || bodyError) {
@@ -74,9 +74,14 @@ const NewIssue = ({ hideModal, createIssue }) => {
 
     const issue = {
       title: issueTitle,
-      body: issuebody
+      body: issuebody,
     };
-    createIssue(issue);
+    await createIssue(issue);
+    await fetchIssueData({ payload: { direction: "asc" } }).then((res) => {
+      setIssueData((prevState) => {
+        return { ...prevState, data: res };
+      });
+    });
     hideModal(); // issueの追加処理が終わったらモーダルを閉じる
   };
 
@@ -101,9 +106,7 @@ const NewIssue = ({ hideModal, createIssue }) => {
       </InputSection>
       <MessageContainer>
         {errors.title && <ErrorMessage message={errors.title}></ErrorMessage>}
-        {errors.body && (
-          <ErrorMessage message={errors.body}></ErrorMessage>
-        )}
+        {errors.body && <ErrorMessage message={errors.body}></ErrorMessage>}
       </MessageContainer>
       <Footer>
         <Button styleType="primary" label="作成" onClick={onSubmit} />
@@ -115,7 +118,6 @@ const NewIssue = ({ hideModal, createIssue }) => {
 
 NewIssue.propTypes = {
   hideModal: PropTypes.func,
-  addIssue: PropTypes.func,
   profile: PropTypes.object,
 };
 
