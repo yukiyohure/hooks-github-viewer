@@ -5,7 +5,6 @@ import {
 const issueData = [];
 
 const initialState = {
-  index: issueData.length, // dataの長さ ≒ dataのidの値
   data: issueData, // data自体
 };
 

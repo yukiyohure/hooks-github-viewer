@@ -1,9 +1,11 @@
-import React from "react";
+import { useContext, useEffect } from "react";
 import styled from "styled-components";
 import { colors } from "../../variables";
 import PropTypes from "prop-types";
 import EditIssue from "../templates/EditIssue";
 import { getFormatedDate } from "../../utils";
+import { fetchIssueData } from "../../service/apiRequest";
+import { IssueContext } from "../../contexts/IssueContext";
 
 const Wrapper = styled.div`
   overflow: scroll;
@@ -40,7 +42,6 @@ const TableRow = styled.tr`
 `;
 
 const IssueContents = ({
-  issueData,
   showModal,
   hideModal,
   updateIssue,
@@ -49,7 +50,21 @@ const IssueContents = ({
   isCheckedAllCheckbox,
   setIsCheckedAllCheckbox,
 }) => {
-  const allIdList = issueData?.map((item) => item.number);
+  const { setIssueData, issueData, searchWord } = useContext(IssueContext);
+
+  useEffect(() => {
+    fetchIssueData({ payload: { direction: "asc" } }).then((res) => {
+      setIssueData((prevState) => {
+        return {...prevState, data: res};
+      });
+    });
+  }, [setIssueData]);
+
+  const filterdIssueData = issueData.data?.filter((item) => {
+    return item.title.includes(searchWord);
+  });
+
+  const allIdList = filterdIssueData?.map((item) => item.number);
   const onClickAllCheckbox = () => {
     setIsCheckedAllCheckbox((prevState) => {
       const newState = !prevState;
@@ -93,8 +108,8 @@ const IssueContents = ({
           </TableRow>
         </thead>
         <tbody>
-          {issueData?.length ? (
-            issueData.map((row) => {
+          {filterdIssueData?.length ? (
+            filterdIssueData.map((row) => {
               const createdAt = getFormatedDate(row.created_at);
               const updatedAt = getFormatedDate(row.updated_at);
               return (

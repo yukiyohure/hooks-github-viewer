@@ -11,6 +11,7 @@ import ModalWrapper from "./containers/Modal";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { ProfileContextProvider } from "./contexts/ProfileContext";
+import { IssueContextProvider } from "./contexts/IssueContext";
 
 const ContentWrapper = styled.div`
   padding: 2rem 1rem;
@@ -22,19 +23,25 @@ function App() {
   return (
     <Router basename="/hooks-github-viewer">
       <div>
-        <ModalWrapper />
-        <GlobalStyle />
-        <Header />
+        <ProfileContextProvider>
+          <IssueContextProvider>
+            <ModalWrapper />
+          </IssueContextProvider>
+          <GlobalStyle />
+          <Header />
+        </ProfileContextProvider>
         <ContentWrapper>
-          <ProfileContextProvider>
-            <Switch>
-              <Route path="/issue" component={IssuePage} />
-              <Route path="/pull-request" component={PullRequest} />
-              <Route path="/profile" component={Profile} />
-              <Route exact path="/" component={Index} />
-              {/* pathの検索方法が前方置換なのでexactを宣言して完全一致にしてあげる */}
-            </Switch>
-          </ProfileContextProvider>
+          <IssueContextProvider>
+            <ProfileContextProvider>
+              <Switch>
+                <Route path="/issue" component={IssuePage} />
+                <Route path="/pull-request" component={PullRequest} />
+                <Route path="/profile" component={Profile} />
+                <Route exact path="/" component={Index} />
+                {/* pathの検索方法が前方置換なのでexactを宣言して完全一致にしてあげる */}
+              </Switch>
+            </ProfileContextProvider>
+          </IssueContextProvider>
         </ContentWrapper>
         <ToastContainer limit={3} />
       </div>
