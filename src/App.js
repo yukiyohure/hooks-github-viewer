@@ -23,15 +23,13 @@ function App() {
   return (
     <Router basename="/hooks-github-viewer">
       <div>
-        <ProfileContextProvider>
-          <IssueContextProvider>
+        <IssueContextProvider>
+          <ProfileContextProvider>
             <ModalWrapper />
-          </IssueContextProvider>
-          <GlobalStyle />
-          <Header />
-        </ProfileContextProvider>
-        <ContentWrapper>
-          <IssueContextProvider>
+            <GlobalStyle />
+            <Header />
+          </ProfileContextProvider>
+          <ContentWrapper>
             <ProfileContextProvider>
               <Switch>
                 <Route path="/issue" component={IssuePage} />
@@ -41,9 +39,9 @@ function App() {
                 {/* pathの検索方法が前方置換なのでexactを宣言して完全一致にしてあげる */}
               </Switch>
             </ProfileContextProvider>
-          </IssueContextProvider>
-        </ContentWrapper>
-        <ToastContainer limit={3} />
+          </ContentWrapper>
+          <ToastContainer limit={3} />
+        </IssueContextProvider>
       </div>
     </Router>
   );
